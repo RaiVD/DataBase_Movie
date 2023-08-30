@@ -29,7 +29,7 @@ class TableMovieService {
             return
         }
         val sql =
-            "DELETE FROM movies WHERE codeMovies=$codeMovie"
+            "DELETE FROM movies WHERE codeMovie=$codeMovie"
 
         try {
             val statement = connection.createStatement()
@@ -50,7 +50,7 @@ class TableMovieService {
                 return
             }
             val sql =
-                "UPDATE movie SET title='$title', image='$image', description='$description', gender='$gender' WHERE codeMovie=$codeMovie"
+                "UPDATE movies SET title='$title', image='$image', description='$description', gender='$gender' WHERE codeMovie=$codeMovie"
             val statement = connection.createStatement()
             statement.executeUpdate(sql)
             println("Filme $title atualizado com sucesso!")

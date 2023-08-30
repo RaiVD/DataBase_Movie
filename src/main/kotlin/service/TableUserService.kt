@@ -12,6 +12,9 @@ class TableUserService {
             if (!isValidUserInfo(cpf, nameUser, email, senha)) {
                 println("As informações do usuário não podem estar vazias ou nulas.")
                 return
+            }else if(!isValidEmail(email)){
+                println("Email invalido!")
+                return
             }
             val sql =
                 "INSERT INTO users (cpf, nameUser, email, senha) VALUES ('$cpf', '$nameUser', '$email', '$senha')"
@@ -49,6 +52,9 @@ class TableUserService {
                 return
             } else if (!isValidUserInfo(cpf, nameUser, email, senha)) {
                 println("As informações do usuário não podem estar vazias ou nulas.")
+                return
+            } else if(!isValidEmail(email)){
+                println("Email invalido!")
                 return
             }
             val sql =
@@ -100,11 +106,12 @@ class TableUserService {
 
         return false
     }
-
     private fun isValidUserInfo(cpf: String, nameUser: String, email: String, senha: String): Boolean {
         return cpf.isNotBlank() && nameUser.isNotBlank() && email.isNotBlank() && senha.isNotBlank()
     }
-
+    private fun isValidEmail(email: String): Boolean {
+        return email.contains("@") && email.endsWith("@gmail.com")
+    }
     fun isValidUserCredentials(nameUser: String, senha: String): Boolean {
         if (nameUser.isBlank() || senha.isBlank()) {
             println("O nome de usuário e a senha não podem estar vazios.")
