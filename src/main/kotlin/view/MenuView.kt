@@ -29,4 +29,5 @@ class MenuView {
     private fun printMenu() {
         println("\n0. Sair | 1. Usuario | 2. Cadastrar")
     }
+
 }
