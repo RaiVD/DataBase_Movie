@@ -14,7 +14,7 @@ class TableMovieService {
                 return
             }
             val sql =
-                "INSERT INTO movies (codeMovie, title, image, description, gender) VALUES ('$codeMovie', '$title', '$image', '$description', '$gender')"
+                "INSERT INTO movies (code, title, image, description, gender) VALUES ('$codeMovie', '$title', '$image', '$description', '$gender')"
 
             val statement = connection.createStatement()
             statement.executeUpdate(sql)
@@ -29,7 +29,7 @@ class TableMovieService {
             return
         }
         val sql =
-            "DELETE FROM movies WHERE codeMovie=$codeMovie"
+            "DELETE FROM movies WHERE code=$codeMovie"
 
         try {
             val statement = connection.createStatement()
@@ -50,7 +50,7 @@ class TableMovieService {
                 return
             }
             val sql =
-                "UPDATE movies SET title='$title', image='$image', description='$description', gender='$gender' WHERE codeMovie=$codeMovie"
+                "UPDATE movies SET title='$title', image='$image', description='$description', gender='$gender' WHERE code=$codeMovie"
             val statement = connection.createStatement()
             statement.executeUpdate(sql)
             println("Filme $title atualizado com sucesso!")
@@ -59,13 +59,13 @@ class TableMovieService {
             e.printStackTrace()
         }
     }
-    fun listBooks() {
+    fun listMovies() {
         val statement = connection.createStatement()
-        val resultSet = statement.executeQuery("SELECT codeMovie, title, image, description, gender FROM movies")
+        val resultSet = statement.executeQuery("SELECT code, title, image, description, gender FROM movies")
 
         try {
             while (resultSet.next()) {
-                val codeMovie = resultSet.getInt("codeMovie")
+                val codeMovie = resultSet.getString("code")
                 val title = resultSet.getString("title")
                 val image = resultSet.getString("image")
                 val description = resultSet.getString("description")
@@ -82,7 +82,7 @@ class TableMovieService {
 
         try {
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setString(3, codeMovie)
+            preparedStatement.setString(1, codeMovie)
             val resultSet = preparedStatement.executeQuery()
             resultSet.next()
             val count = resultSet.getInt(1)
@@ -99,5 +99,25 @@ class TableMovieService {
     }
     private fun isValidMovieInfo(codeMovie: String, title: String, image: String, description: String, gender: String): Boolean {
         return codeMovie.isNotBlank() && title.isNotBlank() && image.isNotBlank() && description.isNotBlank() && gender.isNotBlank()
+    }
+    fun isValidMovieToAddToFavorite(title: String): Boolean {
+        val sql = "SELECT COUNT(*) FROM movies WHERE title=?"
+
+        try {
+            val preparedStatement = connection.prepareStatement(sql)
+            preparedStatement.setString(1, title)
+            val resultSet = preparedStatement.executeQuery()
+            resultSet.next()
+            val count = resultSet.getInt(1)
+
+            resultSet.close()
+            preparedStatement.close()
+
+            return count > 0
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return false
     }
 }

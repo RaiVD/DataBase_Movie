@@ -7,9 +7,9 @@ class TableUserService {
 
     private val connection = Connect().creatConnect()
 
-    fun addUser(cpf: String, nameUser: String, email: String, senha: String) {
+    fun addUser(cpf: String, alias: String, email: String, senha: String) {
         try {
-            if (!isValidUserInfo(cpf, nameUser, email, senha)) {
+            if (!isValidUserInfo(cpf, alias, email, senha)) {
                 println("As informações do usuário não podem estar vazias ou nulas.")
                 return
             }else if(!isValidEmail(email)){
@@ -17,11 +17,11 @@ class TableUserService {
                 return
             }
             val sql =
-                "INSERT INTO users (cpf, nameUser, email, senha) VALUES ('$cpf', '$nameUser', '$email', '$senha')"
+                "INSERT INTO users (cpf, alias, email, senha) VALUES ('$cpf', '$alias', '$email', '$senha')"
 
             val statement = connection.createStatement()
             statement.executeUpdate(sql)
-            println("Usuário $nameUser adicionado com sucesso!")
+            println("Usuário $alias adicionado com sucesso!")
         } catch (e: SQLException) {
             e.printStackTrace()
         }
@@ -45,12 +45,12 @@ class TableUserService {
         }
     }
 
-    fun updateUser(id: Int, cpf: String, nameUser: String, email: String, senha: String) {
+    fun updateUser(id: Int, email: String, senha: String) {
         try {
             if (!isValidUserId(id)) {
                 println("ID de usuário inválido!")
                 return
-            } else if (!isValidUserInfo(cpf, nameUser, email, senha)) {
+            } else if (!email.isNotBlank() && senha.isNotBlank()) {
                 println("As informações do usuário não podem estar vazias ou nulas.")
                 return
             } else if(!isValidEmail(email)){
@@ -58,10 +58,10 @@ class TableUserService {
                 return
             }
             val sql =
-                "UPDATE users SET cpf='$cpf', nameUser='$nameUser', email='$email', senha='$senha' WHERE id=$id"
+                "UPDATE users SET email='$email', senha='$senha' WHERE id=$id"
             val statement = connection.createStatement()
             statement.executeUpdate(sql)
-            println("Usuário $nameUser atualizado com sucesso!")
+            println("Dados atualizados com sucesso!")
             statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -70,15 +70,15 @@ class TableUserService {
 
     fun listUsers() {
         val statement = connection.createStatement()
-        val resultSet = statement.executeQuery("SELECT id, cpf, nameUser, email FROM users")
+        val resultSet = statement.executeQuery("SELECT id, cpf, alias, email FROM users")
 
         try {
             while (resultSet.next()) {
                 val id = resultSet.getInt("id")
                 val cpf = resultSet.getString("cpf")
-                val nameUser = resultSet.getString("nameUser")
+                val alias = resultSet.getString("alias")
                 val email = resultSet.getString("email")
-                println("ID do Usuário: $id | CPF: $cpf | Nome: $nameUser | Email: $email")
+                println("ID do Usuário: $id | CPF: $cpf | Nome: $alias | Email: $email")
             }
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -106,24 +106,24 @@ class TableUserService {
 
         return false
     }
-    private fun isValidUserInfo(cpf: String, nameUser: String, email: String, senha: String): Boolean {
-        return cpf.isNotBlank() && nameUser.isNotBlank() && email.isNotBlank() && senha.isNotBlank()
+    private fun isValidUserInfo(cpf: String, alias: String, email: String, senha: String): Boolean {
+        return cpf.isNotBlank() && alias.isNotBlank() && email.isNotBlank() && senha.isNotBlank()
     }
     private fun isValidEmail(email: String): Boolean {
         return email.contains("@") && email.endsWith("@gmail.com")
     }
-    fun isValidUserCredentials(nameUser: String, senha: String): Boolean {
-        if (nameUser.isBlank() || senha.isBlank()) {
+    fun isValidUserCredentials(alias: String, senha: String): Boolean {
+        if (alias.isBlank() || senha.isBlank()) {
             println("O nome de usuário e a senha não podem estar vazios.")
             return false
         }
 
-        val sql = "SELECT COUNT(*) FROM users WHERE nameUser=? AND senha=?"
+        val sql = "SELECT COUNT(*) FROM users WHERE alias=? AND senha=?"
 
         try {
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setString(3, nameUser)
-            preparedStatement.setString(5, senha)
+            preparedStatement.setString(1, alias)
+            preparedStatement.setString(2, senha)
             val resultSet = preparedStatement.executeQuery()
             resultSet.next()
             val count = resultSet.getInt(1)
