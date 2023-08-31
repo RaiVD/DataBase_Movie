@@ -42,25 +42,25 @@ class TableFavoriteMovieService {
         }
     }
 
-    fun updateFavoriteMovie(id: Int, title: String, image: String) {
-        try {
-            if (!isValidFavoriteMovieId(id)) {
-                println("ID de filme favorito inválido!")
-                return
-            } else if (!isValidFavoriteMovieInfo(title, image)) {
-                println("As informações do filme favorito não podem estar vazias ou nulas.")
-                return
-            }
-            val sql =
-                "UPDATE favoriteMovies SET title='$title', image='$image' WHERE id=$id"
-            val statement = connection.createStatement()
-            statement.executeUpdate(sql)
-            println("Filme favorito $title atualizado com sucesso!")
-            statement.close()
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-    }
+//    fun updateFavoriteMovie(id: Int, title: String, image: String) {
+//        try {
+//            if (!isValidFavoriteMovieId(id)) {
+//                println("ID de filme favorito inválido!")
+//                return
+//            } else if (!isValidFavoriteMovieInfo(title, image)) {
+//                println("As informações do filme favorito não podem estar vazias ou nulas.")
+//                return
+//            }
+//            val sql =
+//                "UPDATE favoriteMovies SET title='$title', image='$image' WHERE id=$id"
+//            val statement = connection.createStatement()
+//            statement.executeUpdate(sql)
+//            println("Filme favorito $title atualizado com sucesso!")
+//            statement.close()
+//        } catch (e: SQLException) {
+//            e.printStackTrace()
+//        }
+//    }
 
     fun listFavoriteMovies() {
         val statement = connection.createStatement()

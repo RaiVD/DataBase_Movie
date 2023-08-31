@@ -138,4 +138,28 @@ class TableUserService {
 
         return false
     }
+    fun userInfoByAlias(alias: String) {
+        val sql = "SELECT id, cpf, email FROM users WHERE alias=?"
+
+        try {
+            val preparedStatement = connection.prepareStatement(sql)
+            preparedStatement.setString(1, alias)
+            val resultSet = preparedStatement.executeQuery()
+
+            if (resultSet.next()) {
+                val id = resultSet.getInt("id")
+                val cpf = resultSet.getString("cpf")
+                val email = resultSet.getString("email")
+                println("Informações da Conta:\n ID: $id | CPF: $cpf | Nome: $alias | Email: $email")
+            } else {
+                println("Usuário com o nome $alias não encontrado.")
+            }
+
+            resultSet.close()
+            preparedStatement.close()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
 }
