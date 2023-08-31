@@ -1,11 +1,15 @@
 package view
 
 import model.InputUserModel
-import service.TableFavoriteMovieService
-import service.TableMovieService
-import service.TableUserService
+import service.tableFavoriteMovieService.TableFavoriteMovieService
+import service.tableMovieService.TableMovieService
+import service.tableMovieService.ValidDataBaseMovieService
+import service.tableUserService.TableUserService
+import service.tableUserService.ValidDataBaseUserService
 
 class LoginUserView {
+    private val validDataBaseMovieService = ValidDataBaseMovieService()
+    private val validDataBase = ValidDataBaseUserService()
     private val inputUserModel = InputUserModel()
     private val tableMovieService = TableMovieService()
     private val tableUserService = TableUserService()
@@ -14,9 +18,9 @@ class LoginUserView {
         val name = inputUserModel.readStringFromUser("Digite seu nome:")
         val password = inputUserModel.readStringFromUser("Digite a senha:")
 
-        if (tableUserService.isValidUserCredentials(name, password)) {
+        if (validDataBase.isValidUserCredentials(name, password)) {
             println("========== Bem-Vindo $name ==========")
-            tableUserService.userInfoByAlias(name)
+            validDataBase.userInfoByAlias(name)
             var option: Int
             do {
                 menu()
@@ -49,7 +53,7 @@ class LoginUserView {
         val title = inputUserModel.readStringFromUser("Qual o nome do filme: ")
         val image = inputUserModel.readStringFromUser("Qual a url da imagem do filme: ")
 
-        if (!tableMovieService.isValidMovieToAddToFavorite(title)) {
+        if (!validDataBaseMovieService.isValidMovieToAddToFavorite(title)) {
             println("Filme não encontardo, tente adicinar outro!")
             return
         } else {
@@ -70,8 +74,7 @@ class LoginUserView {
     }
 
     private fun menu() {
-        println(
-            " 0. Menu Principal |" +
+        println("\n0. Menu Principal |" +
                     " 1. Filmes disponiveis |" +
                     " 2. Filmes Favoritos |" +
                     " 3. Adicinar ao favoritos |" +

@@ -1,31 +1,33 @@
 package view
 
 import model.InputUserModel
-import service.TableFavoriteMovieService
-import service.TableMovieService
-import service.TableUserService
+import service.tableUserService.TableUserService
 
 class MenuView {
-    private val loginView = LoginUserView()
+    private val loginUserView = LoginUserView()
+    private val loginAdminView = LoginAdminView()
     private val inputUserModel = InputUserModel()
-    private val tableMovieService = TableMovieService()
     private val tableUserService = TableUserService()
-    private val tableFavoriteMovieService = TableFavoriteMovieService()
 
     fun start() {
-        println("======================= Cinema SimCity =========================")
-        var option: Int
-        do {
-            printMenu()
-            option = inputUserModel.readIntFromUser("Qual opção você deseja: ")
+        try {
+            println("======================== Cinema SimCity ==========================")
+            var option: Int
+            do {
+                printMenu()
+                option = inputUserModel.readIntFromUser("Qual opção você deseja: ")
 
-            when (option) {
-                0 -> println("Encerrando o programa...")
-                1 -> loginView.fazerLogin()
-                2 -> registerUser()
-                else -> println("Opção inválida, tente novamente!")
-            }
-        } while (option != 0)
+                when (option) {
+                    0 -> println("Encerrando o programa...")
+                    1 -> loginUserView.fazerLogin()
+                    2 -> registerUser()
+                    3 -> loginAdminView.fazerLogin()
+                    else -> println("Opção inválida, tente novamente!")
+                }
+            } while (option != 0)
+        }catch (e: IllegalArgumentException){
+            println("Erro: ${e.message}")
+        }
     }
 
     private fun registerUser(){
@@ -38,6 +40,6 @@ class MenuView {
     }
 
     private fun printMenu() {
-        println("0. Sair | 1. Login Usuario | 2. Cadastrar Usuario | 3. Login Admin")
+        println("\n. Sair | 1. Login Usuario | 2. Cadastrar Usuario | 3. Login Admin")
     }
 }

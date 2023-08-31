@@ -1,39 +1,42 @@
 package view
 
 import model.InputUserModel
-import service.TableFavoriteMovieService
-import service.TableMovieService
-import service.TableUserService
+import service.tableMovieService.TableMovieService
+import service.tableUserService.TableUserService
+import service.tableUserService.ValidUserAdminService
 
 class LoginAdminView {
-    private val loginView = LoginUserView()
+    private val validUserAdmin = ValidUserAdminService()
     private val inputUserModel = InputUserModel()
     private val tableMovieService = TableMovieService()
     private val tableUserService = TableUserService()
-    private val tableFavoriteMovieService = TableFavoriteMovieService()
 
     fun fazerLogin() {
-        val name = inputUserModel.readStringFromUser("Digite seu nome:")
-        val password = inputUserModel.readStringFromUser("Digite a senha:")
+        try {
+            val name = inputUserModel.readStringFromUser("Digite seu nome:")
+            val password = inputUserModel.readStringFromUser("Digite a senha:")
 
-        if (tableUserService.isValidUserCredentials(name, password)) {
-            println("========== Bem-Vindo $name ==========")
-            var option: Int
-            do {
-                menu()
-                option = inputUserModel.readIntFromUser("Qual opção você deseja: ")
+            if (validUserAdmin.isValidUserCredentials(name, password)) {
+                println("========== Bem-Vindo $name ==========")
+                var option: Int
+                do {
+                    menu()
+                    option = inputUserModel.readIntFromUser("Qual opção você deseja: ")
 
-                when (option) {
-                    0 -> MenuView()
-                    1 -> addMovie()
-                    2 -> deleteMovies()
-                    3 -> updateMovie()
-                    4 -> deleteUser()
-                    else -> println("Opção inválida, tente novamente!")
-                }
-            } while (option != 0)
-        } else {
-            println("Senha ou nome invalidos!")
+                    when (option) {
+                        0 -> MenuView()
+                        1 -> addMovie()
+                        2 -> deleteMovies()
+                        3 -> updateMovie()
+                        4 -> deleteUser()
+                        else -> println("Opção inválida, tente novamente!")
+                    }
+                } while (option != 0)
+            } else {
+                println("Senha ou nome invalidos!")
+            }
+        }catch (e: IllegalArgumentException){
+            println("Erro: ${e.message}")
         }
     }
     private fun addMovie(){
@@ -49,7 +52,7 @@ class LoginAdminView {
         tableMovieService.deleteMovie(code)
     }
     private fun updateMovie(){
-        val code = inputUserModel.readStringFromUser("Novo codigo do Filme: ")
+        val code = inputUserModel.readStringFromUser("Digite o codigo do Filme que deseja atualizar: : ")
         val title = inputUserModel.readStringFromUser("Novo nome do filme: ")
         val image = inputUserModel.readStringFromUser("Nova Url da imagem do filme: ")
         val descriotion = inputUserModel.readStringFromUser("Nova descrição do filme: ")
@@ -62,13 +65,11 @@ class LoginAdminView {
         val id = inputUserModel.readIntFromUser("Qual o id do usuario que deseja deletar: ")
         tableUserService.deleteUser(id)
     }
-
     private fun menu() {
-        println("0. Menu Principal |" +
+        println("\n0. Menu Principal |" +
                 " 1. Add Filmes |" +
                 " 2. Deletar Filmes |" +
                 " 3. Modificar Fimes |" +
-                " 4. Deletar Usuario |" +
-                " 5. ")
+                " 4. Deletar Usuario")
     }
 }

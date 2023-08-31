@@ -1,4 +1,4 @@
-package service
+package service.tableFavoriteMovieService
 
 import connection.Connect
 import java.sql.SQLException
@@ -6,10 +6,11 @@ import java.sql.SQLException
 class TableFavoriteMovieService {
 
     private val connection = Connect().creatConnect()
+    private val validDataBaseFavoriteMovieService = ValidDataBaseFavoriteMovieService()
 
     fun addFavoriteMovie(title: String, image: String) {
         try {
-            if (!isValidFavoriteMovieInfo(title, image)) {
+            if (!validDataBaseFavoriteMovieService.isValidFavoriteMovieInfo(title, image)) {
                 println("As informações do filme favorito não podem estar vazias ou nulas.")
                 return
             }
@@ -25,7 +26,7 @@ class TableFavoriteMovieService {
     }
 
     fun deleteFavoriteMovie(id: Int) {
-        if (!isValidFavoriteMovieId(id)) {
+        if (!validDataBaseFavoriteMovieService.isValidFavoriteMovieId(id)) {
             println("ID de filme favorito inválido!")
             return
         }
@@ -79,28 +80,5 @@ class TableFavoriteMovieService {
         println()
     }
 
-    private fun isValidFavoriteMovieId(id: Int): Boolean {
-        val sql = "SELECT COUNT(*) FROM favorite_movies WHERE id=?"
 
-        try {
-            val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setInt(1, id)
-            val resultSet = preparedStatement.executeQuery()
-            resultSet.next()
-            val count = resultSet.getInt(1)
-
-            resultSet.close()
-            preparedStatement.close()
-
-            return count > 0
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return false
-    }
-
-    private fun isValidFavoriteMovieInfo(title: String, image: String): Boolean {
-        return title.isNotBlank() && image.isNotBlank()
-    }
 }

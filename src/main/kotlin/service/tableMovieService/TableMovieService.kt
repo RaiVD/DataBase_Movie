@@ -1,4 +1,4 @@
-package service
+package service.tableMovieService
 
 import connection.Connect
 import java.sql.SQLException
@@ -6,10 +6,11 @@ import java.sql.SQLException
 class TableMovieService {
 
     private val connection = Connect().creatConnect()
+    private val validDataBaseMovieService = ValidDataBaseMovieService()
 
     fun addMovie(codeMovie: String, title: String, image: String, description: String, gender: String) {
         try {
-            if (!isValidMovieInfo(codeMovie, title, image, description, gender)) {
+            if (!validDataBaseMovieService.isValidMovieInfo(codeMovie, title, image, description, gender)) {
                 println("As informações do filme não podem estar vazias ou nulas.")
                 return
             }
@@ -24,7 +25,7 @@ class TableMovieService {
         }
     }
     fun deleteMovie(codeMovie: String) {
-        if (!isValidMovieCode(codeMovie)) {
+        if (!validDataBaseMovieService.isValidMovieCode(codeMovie)) {
             println("codigo de filme inválido!")
             return
         }
@@ -42,10 +43,10 @@ class TableMovieService {
     }
     fun updateMovie(codeMovie: String, title: String, image: String, description: String, gender: String) {
         try {
-            if (!isValidMovieCode(codeMovie)) {
+            if (!validDataBaseMovieService.isValidMovieCode(codeMovie)) {
                 println("codigo de filme inválido!")
                 return
-            } else if (!isValidMovieInfo(codeMovie, title, image, description, gender)) {
+            } else if (!validDataBaseMovieService.isValidMovieInfo(codeMovie, title, image, description, gender)) {
                 println("As informações do filme não podem estar vazias ou nulas.")
                 return
             }
@@ -77,47 +78,5 @@ class TableMovieService {
         }
         println()
     }
-    private fun isValidMovieCode(codeMovie: String): Boolean {
-        val sql = "SELECT COUNT(*) FROM movies WHERE codeMovie=?"
 
-        try {
-            val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setString(1, codeMovie)
-            val resultSet = preparedStatement.executeQuery()
-            resultSet.next()
-            val count = resultSet.getInt(1)
-
-            resultSet.close()
-            preparedStatement.close()
-
-            return count > 0
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return false
-    }
-    private fun isValidMovieInfo(codeMovie: String, title: String, image: String, description: String, gender: String): Boolean {
-        return codeMovie.isNotBlank() && title.isNotBlank() && image.isNotBlank() && description.isNotBlank() && gender.isNotBlank()
-    }
-    fun isValidMovieToAddToFavorite(title: String): Boolean {
-        val sql = "SELECT COUNT(*) FROM movies WHERE title=?"
-
-        try {
-            val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setString(1, title)
-            val resultSet = preparedStatement.executeQuery()
-            resultSet.next()
-            val count = resultSet.getInt(1)
-
-            resultSet.close()
-            preparedStatement.close()
-
-            return count > 0
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return false
-    }
 }
